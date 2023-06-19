@@ -1,6 +1,8 @@
 from flask import Flask, request, render_template, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
+from flask import send_file
+
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////tmp/test.db'
@@ -23,6 +25,7 @@ class ExperimentDataSchema(ma.SQLAlchemyAutoSchema):
 experiment_schema = ExperimentDataSchema()
 experiments_schema = ExperimentDataSchema(many=True)
 
+db.create_all()
 
 @app.route('/postdata', methods=['POST'])
 def post_data():
@@ -55,7 +58,7 @@ def get_data(trial, participant, condition):
     data = ExperimentData.query.filter_by(trial=trial, participantId=participant, condition=condition).first()
     return experiment_schema.jsonify(data)
 
-@app.route('/graph', methods=['GET'])
+@app.route('/', methods=['GET'])
 def render_graph():
     return render_template('graph.html')
 
@@ -73,3 +76,8 @@ def get_conditions():
 def get_participants():
     participants = db.session.query(ExperimentData.participantId).distinct().all()
     return jsonify([participant[0] for participant in participants])
+
+@app.route('/download_database', methods=['GET'])
+def download_database():
+    db_path = app.config['SQLALCHEMY_DATABASE_URI'][10:]  # Extract the database file path from the URI
+    return send_file(db_path, as_attachment=True)

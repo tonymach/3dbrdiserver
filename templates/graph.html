@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>BRDI Augmented Reality Experiment</title>
+
+    <!-- Include jQuery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+    <!-- Include Bootstrap JS -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+
+  <style>
+        .form-group {
+            margin-right: 20px; /* Change this value for more or less spacing */
+        }
+
+        #go-button:hover {
+            background-color: #28a745; /* Darken button when hovered over */
+            border-color: #28a745; /* Darken border when hovered over */
+        }
+
+        #go-button:active {
+            background-color: #218838; /* Further darken button when clicked */
+            border-color: #1e7e34; /* Further darken border when clicked */
+        }
+    </style>
+
+</head>
+<body class="container">
+    <h1 class="text-center my-4">BRDI Augmented Reality Experiment</h1>
+    <h3 class="text-center mb-4">What did the dendrite say to the axon? "I like your nerve!"</h3>
+
+<div class="row">
+    <div class="col-md-4 mx-auto my-1 text-center">
+        <h3>Plot</h3>
+        <div id="plot" class="d-flex align-items-center justify-content-center rounded" style="height: 400px; background-image: url('https://cdn.discordapp.com/attachments/981832774157762570/1117942622829416458/polyMack_bird_on_a_nest_colorful_bright_chirping_in_a_cartoon_s_748bbedb-d0d2-42f8-b929-adbf30b3f054.png'); background-repeat: no-repeat; background-position: center center; background-size: contain;"></div>
+    </div>
+    <div class="col-md-4 mx-auto my-1 text-center">
+        <h3>Velocity</h3>
+        <div id="velocity" class="d-flex align-items-center justify-content-center rounded" style="height: 400px; background-image: url('https://cdn.discordapp.com/attachments/981832774157762570/1117942626436530176/polyMack_bird_on_a_nest_colorful_bright_chirping_in_a_cartoon_s_47b46309-e3a4-4e0e-879c-65c7e2c4a8b4.png'); background-repeat: no-repeat; background-position: center center; background-size: contain;"></div>
+    </div>
+    <div class="col-md-4 mx-auto my-1 text-center">
+        <h3>Acceleration</h3>
+        <div id="acceleration" class="d-flex align-items-center justify-content-center rounded" style="height: 400px; background-image: url('https://cdn.discordapp.com/attachments/981832774157762570/1117942630123315350/polyMack_bird_on_a_nest_colorful_bright_chirping_in_a_cartoon_s_1d25b183-7419-46ea-b7a6-9e8a35aef57c.png'); background-repeat: no-repeat; background-position: center center; background-size: contain;"></div>
+    </div>
+</div>
+
+    <div class="d-flex justify-content-center my-4">
+        <button class="btn btn-secondary mx-3" id="backward-button" style="font-size: 2em;">&lt;&lt; Backward</button>
+        <button class="btn btn-secondary mx-3" id="forward-button" style="font-size: 2em;">Forward &gt;&gt;</button>
+    </div>
+
+    <!-- Divs for Average Velocity and Acceleration -->
+<div class="card">
+  <div class="card-header">Average Values</div>
+  <div class="card-body">
+    <div class="row">
+      <div class="col">
+        <p id="avg-velocity" class="card-text"></p>
+      </div>
+      <div class="col">
+        <p id="avg-acceleration" class="card-text"></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+    <div class="form-inline">
+        <div class="form-group mb-2">
+            <label for="participant-select" class="mr-2">Select Participant:</label>
+            <select class="form-control" id="participant-select">
+                <!-- Options will be populated dynamically -->
+            </select>
+        </div>
+        <div class="form-group mx-sm-3 mb-2">
+            <label for="condition-select" class="mr-2">Select Condition:</label>
+            <select class="form-control" id="condition-select">
+                <!-- Options will be populated dynamically -->
+            </select>
+        </div>
+        <div class="form-group mb-2">
+            <label for="trial-select" class="mr-2">Select Trial:</label>
+            <select class="form-control" id="trial-select">
+                <!-- Options will be populated dynamically -->
+            </select>
+        </div>
+        <button class="btn btn-success btn-lg mb-2" id="go-button">Go!</button>
+    </div>
+    <script src="{{ url_for('static', filename='graph.js') }}"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+</body>
+</html>
+

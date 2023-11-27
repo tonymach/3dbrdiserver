@@ -1,11 +1,14 @@
-from flask import Flask, request, render_template, jsonify
+from flask import Flask, request, render_template, jsonify, send_from_directory
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
 from flask import send_file
+import mimetypes
 
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////tmp/test.db'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
 db = SQLAlchemy(app)
 ma = Marshmallow(app)
 
@@ -26,6 +29,16 @@ experiment_schema = ExperimentDataSchema()
 experiments_schema = ExperimentDataSchema(many=True)
 
 db.create_all()
+
+def after_request(response):
+    # Check if the request accepts Brotli encoding and the response is a Brotli file
+    if 'br' in request.accept_encodings and response.direct_passthrough and '.br' in response.mimetype_params.get('filename', ''):
+        response.headers['Content-Encoding'] = 'br'
+    return response
+
+@app.route('/static/<path:filename>')
+def custom_static(filename):
+    return send_from_directory('static', filename)
 
 @app.route('/postdata', methods=['POST'])
 def post_data():
@@ -52,6 +65,11 @@ def post_data():
     db.session.commit()
 
     return experiment_schema.jsonify(new_data)
+
+@app.route('/game')
+def game():
+    return render_template('game.html')
+
 
 @app.route('/data/<int:trial>/<string:participant>/<string:condition>', methods=['GET'])
 def get_data(trial, participant, condition):
@@ -81,3 +99,6 @@ def get_participants():
 def download_database():
     db_path = app.config['SQLALCHEMY_DATABASE_URI'][10:]  # Extract the database file path from the URI
     return send_file(db_path, as_attachment=True)
+
+if __name__ == '__main__':
+    app.run(debug=True)

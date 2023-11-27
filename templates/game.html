@@ -24,13 +24,7 @@
       </div>
     </div>
     <script>
-
-      var container = document.querySelector("#unity-container");
       var canvas = document.querySelector("#unity-canvas");
-      var loadingBar = document.querySelector("#unity-loading-bar");
-      var progressBarFull = document.querySelector("#unity-progress-bar-full");
-      var fullscreenButton = document.querySelector("#unity-fullscreen-button");
-      var warningBanner = document.querySelector("#unity-warning");
 
       // Shows a temporary message banner/ribbon for a few seconds, or
       // a permanent error message on top of the canvas if type=='error'.
@@ -39,6 +33,7 @@
       // way that non-critical warnings and error messages are presented to the
       // user.
       function unityShowBanner(msg, type) {
+        var warningBanner = document.querySelector("#unity-warning");
         function updateBannerVisibility() {
           warningBanner.style.display = warningBanner.children.length ? 'block' : 'none';
         }
@@ -57,11 +52,12 @@
       }
 
       var buildUrl = "{{ url_for('static', filename='Build') }}";
-      var loaderUrl = buildUrl + "/web-prod-1.loader.js";
+      var loaderUrl = buildUrl + "/web-prod-1-gzip-fallback.loader.js";
       var config = {
-        dataUrl: buildUrl + "/web-prod-1.data.br",
-        frameworkUrl: buildUrl + "/web-prod-1.framework.js.br",
-        codeUrl: buildUrl + "/web-prod-1.wasm.br",
+        arguments: [],
+        dataUrl: buildUrl + "/web-prod-1-gzip.data.gz",
+        frameworkUrl: buildUrl + "/web-prod-1-gzip.framework.js.gz",
+        codeUrl: buildUrl + "/web-prod-1-gzip.wasm.gz",
         streamingAssetsUrl: "StreamingAssets",
         companyName: "Anthony Machula",
         productName: "Flight",
@@ -69,7 +65,7 @@
         showBanner: unityShowBanner,
       };
 
-      // By default Unity keeps WebGL canvas render target size matched with
+      // By default, Unity keeps WebGL canvas render target size matched with
       // the DOM size of the canvas element (scaled by window.devicePixelRatio)
       // Set this to false if you want to decouple this synchronization from
       // happening inside the engine, and you would instead like to size up
@@ -83,7 +79,7 @@
         meta.name = 'viewport';
         meta.content = 'width=device-width, height=device-height, initial-scale=1.0, user-scalable=no, shrink-to-fit=yes';
         document.getElementsByTagName('head')[0].appendChild(meta);
-        container.className = "unity-mobile";
+        document.querySelector("#unity-container").className = "unity-mobile";
         canvas.className = "unity-mobile";
 
         // To lower canvas resolution on mobile devices to gain some
@@ -93,23 +89,23 @@
 
       } else {
         // Desktop style: Render the game canvas in a window that can be maximized to fullscreen:
-
         canvas.style.width = "960px";
         canvas.style.height = "600px";
       }
 
-      loadingBar.style.display = "block";
+      document.querySelector("#unity-loading-bar").style.display = "block";
 
       var script = document.createElement("script");
       script.src = loaderUrl;
       script.onload = () => {
         createUnityInstance(canvas, config, (progress) => {
-          progressBarFull.style.width = 100 * progress + "%";
+          document.querySelector("#unity-progress-bar-full").style.width = 100 * progress + "%";
               }).then((unityInstance) => {
-                loadingBar.style.display = "none";
-                fullscreenButton.onclick = () => {
+                document.querySelector("#unity-loading-bar").style.display = "none";
+                document.querySelector("#unity-fullscreen-button").onclick = () => {
                   unityInstance.SetFullscreen(1);
                 };
+
               }).catch((message) => {
                 alert(message);
               });

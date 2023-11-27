@@ -30,10 +30,12 @@ experiments_schema = ExperimentDataSchema(many=True)
 
 db.create_all()
 
+
+@app.after_request
 def after_request(response):
-    # Check if the request accepts Brotli encoding and the response is a Brotli file
-    if 'br' in request.accept_encodings and response.direct_passthrough and '.br' in response.mimetype_params.get('filename', ''):
-        response.headers['Content-Encoding'] = 'br'
+    if response.mimetype == 'application/octet-stream' and '.gz' in request.path:
+        response.headers['Content-Encoding'] = 'gzip'
+        response.direct_passthrough = True
     return response
 
 @app.route('/static/<path:filename>')
